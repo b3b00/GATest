@@ -6,7 +6,7 @@ using System.Linq;
 namespace GATest.model
 {
 
-    public class Polynome
+    public class Polynome : IComparable
     {
 
         public const int Max = 10;
@@ -14,6 +14,8 @@ namespace GATest.model
         public List<Monome> Monomes { get; set; }
 
         public int Count => Monomes.Count;
+
+        public double Fitness { get; set; }
 
         public Polynome()
         {
@@ -58,14 +60,6 @@ namespace GATest.model
             }
         }
 
-        public int CompareTo(Polynome polynome)
-        {
-            double f1 = this.Fitness(Context.Target);
-            double f2 = polynome.Fitness(Context.Target);
-            return f1.CompareTo(f2);
-        }
-
-
         public override string ToString()
         {
             return Monomes.Select(m => m.ToString()).Aggregate((m1, m2) => m1.ToString() + " + " + m2.ToString());
@@ -96,8 +90,6 @@ namespace GATest.model
 
             Polynome mutated = Clone();
             int mutationsCount = Context.Random.Next(mutated.Monomes.Count);
-
-            Console.WriteLine($"mutate {mutationsCount} times");
 
             // compute mutations positions and mutate gene
             List<int> mutationPositions = new List<int>();
@@ -146,8 +138,7 @@ namespace GATest.model
             for (int i = 0; i < crossingCount; i++)
             {
                 Fragment fragment = RandomFragment(minLength);
-                fragments.Add(fragment);
-                Console.WriteLine($"{fragment}");
+                fragments.Add(fragment);                
             }
 
             int n = 0;
@@ -162,10 +153,11 @@ namespace GATest.model
 
         }
 
-        public double Fitness(List<PointF> points)
+        public double ComputeFitness(List<PointF> points)
         {
             double fitness = points.Select(p => Math.Abs(Compute(p.X) - p.Y)).Aggregate((double y1, double y2) => y1 + y2);
-            return 0;
+            Fitness = fitness;
+            return fitness;
         }
 
         public double Compute(double x)
@@ -185,6 +177,23 @@ namespace GATest.model
             return clone;
         }
 
-
+        public int CompareTo(object obj)
+        {
+            if (obj != null)
+            {
+                if (obj is Polynome poly)
+                {
+                    return Fitness.CompareTo(poly.Fitness);
+                }
+                else
+                {
+                    return 1;
+                }
+            }
+            else
+            {
+                return 1;
+            }
+        }
     }
 }
