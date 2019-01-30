@@ -31,9 +31,9 @@ namespace GATest.model
         }
 
 
-  public Polynome Evolve(List<PointD> target)
+        public Polynome Evolve(List<PointD> target)
         {
-            return Evolve(target,PopulationSize,MaxGeneration);
+            return Evolve(target, PopulationSize, MaxGeneration);
         }
 
         public Polynome Evolve(List<PointD> target, int populationSize, int maxGeneration)
@@ -56,26 +56,26 @@ namespace GATest.model
                 // TODO cross first polynomes
                 for (int i = 0; i < PopulationSize / 2; i++)
                 {
-                    var firstParent = Polynomes[2*i];
-                    var secondParent = Polynomes[2*i+1];
+                    var firstParent = Polynomes[2 * i];
+                    var secondParent = Polynomes[2 * i + 1];
                     var child = firstParent.Crossover(secondParent);
                     child.ComputeFitness(target);
-                    
+
                     if (child.CompareTo(secondParent) <= 0)
                     {
-                        //Console.WriteLine($"child beats parent {child.Fitness} <= {secondParent.Fitness}");
-                        Polynomes[2*i+1] = child;
+                        Polynomes[2 * i + 1] = child;
                     }
                 }
                 Polynomes.ForEach(p => p.ComputeFitness(target));
                 Polynomes.Sort();
-                fit = Polynomes.First().Fitness;
-                var fits = Polynomes.Select(p => p.Fitness).ToList();
-                Console.WriteLine($"generation #{gen} : fitness={fit}");
-                var ffstr = fits.Select(f => f.ToString()).ToList();
-                var ff = ffstr.Aggregate((string f1, string f2) => f1 + ", " + f2);
-                // Console.WriteLine($"[ {ff} ]");
-                //.ToList().Aggregate((double f1, double f2) => f1+", "+f2);
+
+                if (gen % 100 == 0)
+                {
+                    fit = Polynomes.First().Fitness;
+                    var fits = Polynomes.Select(p => p.Fitness).ToList();
+                    double averageFit = fits.Average();
+                    Console.WriteLine($"generation #{gen} : best={fit}, average={averageFit}");
+                }
                 gen++;
             }
             var best = Polynomes.First();
@@ -83,7 +83,7 @@ namespace GATest.model
             var simplified = best.Simplify();
 
             Console.WriteLine($"exit with fitness [{Polynomes.First().Fitness}] : {simplified}");
-            
+
             return simplified;
         }
 

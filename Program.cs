@@ -43,7 +43,7 @@ namespace GATest
 
                 Population population = new Population();
                 
-                var best = population.Evolve(target,1500,1000);
+                var best = population.Evolve(target,50000,1000);
                 Console.WriteLine($"lokked for : {targetPoly}");
                 foreach (var p in target)
                 {
@@ -52,6 +52,7 @@ namespace GATest
             }
             catch (Exception e)
             {
+                Console.WriteLine($"{e.Message} : \n {e.StackTrace}");
                 ;
             }
 
