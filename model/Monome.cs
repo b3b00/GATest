@@ -25,8 +25,9 @@ namespace GATest.model
         }
 
 
-        public double Compute(double x) {
-            return Factor * (Math.Pow(x,Exponent));
+        public double Compute(double x)
+        {
+            return Factor * (Math.Pow(x, Exponent));
         }
 
         public Monome Clone()
@@ -97,7 +98,8 @@ namespace GATest.model
                 Console.WriteLine($"mutationt {this} -> {mutated}");
 
             }
-            else {
+            else
+            {
                 mutated = Clone();
             }
             return mutated;

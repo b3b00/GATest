@@ -6,6 +6,8 @@ using GATest.model;
 
 namespace GATest
 {
+
+    
     class Program
     {
         static void Main(string[] args)
@@ -13,27 +15,36 @@ namespace GATest
 
             try
             {
+
                 Context.Random = new Random();
 
-                List<PointF> target = new List<PointF>();
+                List<PointD> target = new List<PointD>();
 
 
 
-                Func<float, Func<float, float>> mono = (float pow) => (x) => (float)Math.Pow(x, pow);
-                Func<float, float> pow5 = mono(5);
-                Func<float, float> cos = (float x) => (float)Math.Cos(x);
+                Func<double, Func<double, double>> power = (double pow) => (x) => (double)Math.Pow(x, pow);
+                Func<double, double> pow5 = power(5);
+                Func<double, double> pow2 = power(2);
+                Func<double, double> cos = (double x) => (double)Math.Cos(x);
                 // y = x + 2x^2 +5x^5
-                Func<float, float> poly = (float x) => x + 2 * mono(2)(x) + 5 * mono(5)(x);
+                Func<double, double> poly = (double x) => x + 2 * pow2(x) + 5 * pow5(x);
+
+                Polynome targetPoly = Polynome.RandomPolynome(10).Simplify();
+                Console.WriteLine($"looking for {targetPoly}");
+                
+
+                Func<double,double> polypoly = (double x) => (double)targetPoly.Compute(x);
 
                 for (int i = 1; i <= 10; i++)
                 {
-                    target.Add(new PointF(i, poly(i)));
+                    target.Add(new PointD(i, polypoly(i)));
                 }
 
 
                 Population population = new Population();
-                population.Evolve(target);
-                var best = population.Best;
+                
+                var best = population.Evolve(target,1500,1000);
+                Console.WriteLine($"lokked for : {targetPoly}");
                 foreach (var p in target)
                 {
                     Console.WriteLine($"x={p.X} expected={p.Y} found={best.Compute(p.X)}");

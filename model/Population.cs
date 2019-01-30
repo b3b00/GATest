@@ -30,7 +30,13 @@ namespace GATest.model
             }
         }
 
-        public void Evolve(List<PointF> target)
+
+  public Polynome Evolve(List<PointD> target)
+        {
+            return Evolve(target,PopulationSize,MaxGeneration);
+        }
+
+        public Polynome Evolve(List<PointD> target, int populationSize, int maxGeneration)
         {
             Context.Target = target;
             int gen = 0;
@@ -77,7 +83,8 @@ namespace GATest.model
             var simplified = best.Simplify();
 
             Console.WriteLine($"exit with fitness [{Polynomes.First().Fitness}] : {simplified}");
-            ;
+            
+            return simplified;
         }
 
     }

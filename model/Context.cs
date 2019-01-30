@@ -9,7 +9,7 @@ namespace GATest.model
 
         public static Random Random;
 
-        public static List<PointF> Target;
+        public static List<PointD> Target;
 
     }
 }

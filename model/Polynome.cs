@@ -9,7 +9,7 @@ namespace GATest.model
     public class Polynome : IComparable
     {
 
-        public const int Max = 3;
+        public const int Max = 10;
 
         public List<Monome> Monomes { get; set; }
 
@@ -29,9 +29,13 @@ namespace GATest.model
 
         public static Polynome RandomPolynome()
         {
+            return RandomPolynome(Max);
+        }
+
+        public static Polynome RandomPolynome(int count)
+        {
             Polynome random = new Polynome();
-            int monomeCount = Max;
-            for (int i = 0; i < monomeCount; i++)
+            for (int i = 0; i < count; i++)
             {
                 random.AddMonome(Monome.RandomMonome());
             }
@@ -65,6 +69,8 @@ namespace GATest.model
                         simplified.AddMonome(new Monome(factor, exponent));
                     }
                 }
+
+                simplified.Monomes = simplified.Monomes.OrderBy(m => m.Exponent).ToList();
 
             }
             ;
@@ -176,7 +182,7 @@ namespace GATest.model
 
         }
 
-        public double ComputeFitness(List<PointF> points)
+        public double ComputeFitness(List<PointD> points)
         {
             double fitness = points.Select(p => Math.Abs(Compute(p.X) - p.Y)).Aggregate((double y1, double y2) => y1 + y2);
             Fitness = fitness;
@@ -185,7 +191,14 @@ namespace GATest.model
 
         public double Compute(double x)
         {
-            double result = Monomes.Select((Monome m) => m.Compute(x)).Aggregate((double d1, double d2) => d1 + d2);
+            double result = 0.0;
+
+            foreach(Monome monome in Monomes) {
+                double monoResult = monome.Compute(x);
+                result += monoResult;
+            }
+
+            //double result = Monomes.Select((Monome m) => m.Compute(x)).Aggregate((double d1, double d2) => d1 + d2);
             return result;
         }
 
