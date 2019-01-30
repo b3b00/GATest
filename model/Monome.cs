@@ -36,22 +36,47 @@ namespace GATest.model
 
         public override string ToString()
         {
-            if (Factor == 0) {
+            if (Factor == 0)
+            {
                 return "0";
             }
-            if (Exponent == 0) {
-                return "1";
+            if (Factor == 1)
+            {
+                if (Exponent == 0)
+                {
+                    return "1";
+                }
+                if (Exponent == 1)
+                {
+                    return "x";
+                }
+                return $"x^{Exponent}";
             }
-            if (Exponent == 1) {
+            if (Factor == -1)
+            {
+                if (Exponent == 0)
+                {
+                    return "-1";
+                }
+                if (Exponent == 1)
+                {
+                    return "-x";
+                }
+                return $"-x^{Exponent}";
+            }
+            if (Exponent == 0)
+            {
+                return $"{Factor}";
+            }
+            if (Exponent == 1)
+            {
                 return $"{Factor} x";
             }
-            if (Factor == 1) {
-                return $" x ^{Exponent}";
-            }
-            else {
-             return $"{Factor} x ^{Exponent}";
-            }
+
+            return $"{Factor} x ^{Exponent}";
         }
+
+
 
         public Monome Mutate()
         {
