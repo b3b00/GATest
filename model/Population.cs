@@ -10,7 +10,7 @@ namespace GATest.model
 
         public const int MaxGeneration = 1000;
 
-        public const int PopulationSize = 100;
+        public const int PopulationSize = 500;
 
         public List<Polynome> Polynomes { get; set; }
 

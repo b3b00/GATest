@@ -9,7 +9,7 @@ namespace GATest.model
     public class Polynome : IComparable
     {
 
-        public const int Max = 10;
+        public const int Max = 3;
 
         public List<Monome> Monomes { get; set; }
 
