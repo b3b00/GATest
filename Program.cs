@@ -10,6 +10,8 @@ namespace GATest
     {
         static void Main(string[] args)
         {
+
+            try {
             Context.Random = new Random();
 
             Polynome p1 = Polynome.RandomPolynome();
@@ -43,7 +45,10 @@ namespace GATest
             foreach(var p in target) {
                 Console.WriteLine($"x={p.X} expected={p.Y} found={best.Compute(p.X)}");
             }
-
+            }
+            catch(Exception e) {
+                ;
+            }
 
         }
     }

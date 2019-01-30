@@ -68,11 +68,15 @@ namespace GATest.model
                 Console.WriteLine($"generation #{gen} : fitness={fit}");
                 var ffstr = fits.Select(f => f.ToString()).ToList();
                 var ff = ffstr.Aggregate((string f1, string f2) => f1 + ", " + f2);
-                Console.WriteLine($"[ {ff} ]");
+                // Console.WriteLine($"[ {ff} ]");
                 //.ToList().Aggregate((double f1, double f2) => f1+", "+f2);
                 gen++;
             }
-            Console.WriteLine($"exit with fitness {Polynomes.First().Fitness}");
+            var best = Polynomes.First();
+            Console.WriteLine(best);
+            var simplified = best.Simplify();
+
+            Console.WriteLine($"exit with fitness [{Polynomes.First().Fitness}] : {simplified}");
             ;
         }
 

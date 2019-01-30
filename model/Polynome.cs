@@ -48,6 +48,29 @@ namespace GATest.model
             Monomes.AddRange(monomes);
         }
 
+        public Polynome Simplify()
+        {
+            Polynome simplified = new Polynome();
+            var groups = Monomes.GroupBy(m => m.Exponent).ToList();
+            foreach (var group in groups)
+            {
+
+                var monomes = group.ToList();
+                if (monomes != null && monomes.Any())
+                {
+                    int exponent = monomes[0].Exponent;
+                    int factor = monomes.Select(m => m.Factor).ToList<int>().Sum();
+                    if (factor != 0)
+                    {
+                        simplified.AddMonome(new Monome(factor, exponent));
+                    }
+                }
+
+            }
+            ;
+            return simplified;
+        }
+
         public Monome this[int index]
         {
             get
@@ -62,7 +85,7 @@ namespace GATest.model
 
         public override string ToString()
         {
-            return Monomes.Select(m => m.ToString()).Aggregate((m1, m2) => m1.ToString() + " + " + m2.ToString());
+            return "y = " + Monomes.Select(m => m.ToString()).Aggregate((m1, m2) => m1.ToString() + " + " + m2.ToString());
         }
 
 
@@ -138,7 +161,7 @@ namespace GATest.model
             for (int i = 0; i < crossingCount; i++)
             {
                 Fragment fragment = RandomFragment(minLength);
-                fragments.Add(fragment);                
+                fragments.Add(fragment);
             }
 
             int n = 0;
@@ -162,7 +185,7 @@ namespace GATest.model
 
         public double Compute(double x)
         {
-            double result = Monomes.Select((Monome m) => m.Factor * x).Aggregate((double d1, double d2) => d1 + d2);
+            double result = Monomes.Select((Monome m) => m.Compute(x)).Aggregate((double d1, double d2) => d1 + d2);
             return result;
         }
 
