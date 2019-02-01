@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using GATest.Abstract;
 
-namespace GATest.model
+namespace GATest.Generic
 {
 
-    public class Polynome : IComparable
+    public class Polynome : IComparable, Individual<List<PointD>>
     {
 
         public const int Max = 10;
@@ -32,10 +33,10 @@ namespace GATest.model
             return RandomPolynome(Max);
         }
 
-        public static Polynome RandomPolynome(int count)
+        public static Polynome RandomPolynome(long count)
         {
             Polynome random = new Polynome();
-            for (int i = 0; i < count; i++)
+            for (long i = 0; i < count; i++)
             {
                 random.AddMonome(Monome.RandomMonome());
             }
@@ -134,6 +135,11 @@ namespace GATest.model
             return mutated;
         }
 
+        public Individual<List<PointD>> Crossover(Individual<List<PointD>> polynome)
+        {
+            return Crossover((Polynome)polynome);
+        }
+
 
         private Fragment RandomFragment(int max)
         {
@@ -180,6 +186,11 @@ namespace GATest.model
 
             return child;
 
+        }
+
+        Individual<List<PointD>> Individual<List<PointD>>.Mutate()
+        {
+            return Mutate();
         }
 
         public double ComputeFitness(List<PointD> points)

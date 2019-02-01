@@ -1,6 +1,6 @@
 using System;
 
-namespace GATest.model
+namespace GATest.Generic
 {
     public class Monome
     {

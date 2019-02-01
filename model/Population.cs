@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Drawing;
 using System.Collections.Generic;
 
 namespace GATest.model
@@ -8,25 +7,32 @@ namespace GATest.model
     public class Population
     {
 
-        public const int MaxGeneration = 1000;
+        private int MaxGeneration { get; set; } = 1000;
 
-        public const int PopulationSize = 500;
+        private int PopulationSize { get; set; } = 500;
 
         public List<Polynome> Polynomes { get; set; }
 
         public Population()
         {
-            InitRandomPopulation(PopulationSize);
+            InitRandomPopulation(PopulationSize, Polynome.Max);
+        }
+
+        public Population(int populationSize, int polynomeSize)
+        {
+            PopulationSize = populationSize;
+            InitRandomPopulation(populationSize, polynomeSize);
         }
 
         public Polynome Best => Polynomes.First();
 
-        public void InitRandomPopulation(int populationSize)
+        public void InitRandomPopulation(int populationSize, int polynomeSize)
         {
             Polynomes = new List<Polynome>();
             for (int i = 0; i < populationSize; i++)
             {
-                Polynomes.Add(Polynome.RandomPolynome());
+                var poly = Polynome.RandomPolynome(polynomeSize);
+                Polynomes.Add(poly);
             }
         }
 
@@ -36,25 +42,30 @@ namespace GATest.model
             return Evolve(target, PopulationSize, MaxGeneration);
         }
 
+
+        public List<Tuple<double, double>> fitnesses = new List<Tuple<double, double>>();
         public Polynome Evolve(List<PointD> target, int populationSize, int maxGeneration)
         {
+            List<Polynome> newGeneration = new List<Polynome>();
+
+            int step = maxGeneration / 10;
             Context.Target = target;
             int gen = 0;
             double fit = double.MaxValue;
             Polynomes.ForEach(p => p.ComputeFitness(target));
             Polynomes.Sort();
-            fit = Polynomes.Last().ComputeFitness(target);
-            while (gen < MaxGeneration && fit > 0.1)
+            fit = Polynomes.First().ComputeFitness(target);
+            while (gen < maxGeneration && fit > 0)
             {
                 // TODO : mutate polynomes
-                foreach (Polynome poly in Polynomes)
+                foreach (var poly in Polynomes)
                 {
                     poly.Mutate();
                     poly.ComputeFitness(target);
                 }
                 Polynomes.Sort();
                 // TODO cross first polynomes
-                for (int i = 0; i < PopulationSize / 2; i++)
+                for (var i = 0; i < PopulationSize / 2; i++)
                 {
                     var firstParent = Polynomes[2 * i];
                     var secondParent = Polynomes[2 * i + 1];
@@ -69,17 +80,33 @@ namespace GATest.model
                 Polynomes.ForEach(p => p.ComputeFitness(target));
                 Polynomes.Sort();
 
-                if (gen % 100 == 0)
+                if (gen % step == 0)
                 {
+                    Console.WriteLine();
                     fit = Polynomes.First().Fitness;
                     var fits = Polynomes.Select(p => p.Fitness).ToList();
                     double averageFit = fits.Average();
-                    Console.WriteLine($"generation #{gen} : best={fit}, average={averageFit}");
+                    Console.WriteLine($"generation #{gen} : best={fit,0:0,00.0}, average={averageFit,0:0,00.0}");
+
+                    if (fitnesses.Count > 3)
+                    {
+
+                        var previous = fitnesses.Last();
+                        var prevpreious = fitnesses[fitnesses.Count - 2];
+
+                        if (previous.Item2 == prevpreious.Item2 && averageFit == previous.Item2)
+                        {
+                            ;
+                        }
+
+                    }
+
+                    fitnesses.Add(new Tuple<double, double>(fit, averageFit));
+
                 }
                 gen++;
             }
             var best = Polynomes.First();
-            Console.WriteLine(best);
             var simplified = best.Simplify();
 
             Console.WriteLine($"exit with fitness [{Polynomes.First().Fitness}] : {simplified}");
